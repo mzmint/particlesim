@@ -1,0 +1,23 @@
+# CLion
+.idea/
+
+# CMake build directories
+cmake-build-*/
+build/
+
+# Compiled files
+*.exe
+*.dll
+*.obj
+*.o
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Qt generated files
+*.moc
+*.qmlc
