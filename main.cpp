@@ -25,6 +25,8 @@ int main() {
 
     std::vector<Particle> particles;
 
+    int st = 40;
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
@@ -33,31 +35,33 @@ int main() {
 
         float dt = deltaClock.restart().asSeconds();
 
-        if (spawnClock.getElapsedTime().asMilliseconds() >= 40) {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+            if (spawnClock.getElapsedTime().asMilliseconds() >= st) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-            Particle particle;
+                Particle particle;
 
-            particle.shape.setSize({5.f, 5.f});
-            particle.shape.setFillColor(sf::Color(255, dist2(gen) , 0));
+                particle.shape.setSize({5.f, 5.f});
+                particle.shape.setFillColor(sf::Color(255, dist2(gen) , 0));
 
-            int randomX = dist1(gen);
-            int randomY = dist1(gen);
+                int randomX = dist1(gen);
+                int randomY = dist1(gen);
 
-            particle.shape.setPosition({
-                mousePos.x + static_cast<float>(randomX),
-                mousePos.y + static_cast<float>(randomY) - 10.f
-            });
+                particle.shape.setPosition({
+                    mousePos.x + static_cast<float>(randomX),
+                    mousePos.y + static_cast<float>(randomY) - 10.f
+                });
 
-            particle.velocity = {
-                static_cast<float>(dist1(gen)),
-                static_cast<float>(dist1(gen))
-            };
+                particle.velocity = {
+                    static_cast<float>(dist1(gen)),
+                    static_cast<float>(dist1(gen))
+                };
 
-            particle.lt = 1.f;
-            particles.push_back(particle);
+                particle.lt = 1.f;
+                particles.push_back(particle);
 
-            spawnClock.restart();
+                spawnClock.restart();
+            }
         }
 
         for (auto& particle : particles) {
@@ -68,6 +72,8 @@ int main() {
         std::erase_if(particles, [](const Particle& particle) {
             return particle.lt <= 0;
         });
+
+
 
         window.clear();
 
