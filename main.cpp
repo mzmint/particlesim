@@ -9,6 +9,8 @@ struct Particle {
 
 int main() {
 
+    int partType = 0;
+
     sf::Clock spawnClock;
     sf::Clock deltaClock;
 
@@ -17,6 +19,10 @@ int main() {
 
     std::uniform_int_distribution<int> dist1(-20, 20);
     std::uniform_int_distribution<int> dist2(0, 255);
+    std::uniform_int_distribution<int> dist3(0, 64);
+    std::uniform_int_distribution<int> dist4(-50, 0);
+    std::uniform_int_distribution<int> dist5(20, 100);
+    std::uniform_int_distribution<int> dist6(-15, 15);
 
     sf::RenderWindow window(
         sf::VideoMode({1920, 1080}),
@@ -31,6 +37,23 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+
+            if (const auto* mouseButton = event->getIf<sf::Event::MouseButtonPressed>())
+            {
+                if (mouseButton->button == sf::Mouse::Button::Right)
+                {
+                    partType++;
+
+                    if (partType > 1)
+                        partType = 0;
+                }
+            }
+        }
+
+        if (partType == 0) {
+            st = 40;
+        } else if (partType == 1) {
+            st = 20;
         }
 
         float dt = deltaClock.restart().asSeconds();
@@ -42,7 +65,11 @@ int main() {
                 Particle particle;
 
                 particle.shape.setSize({5.f, 5.f});
-                particle.shape.setFillColor(sf::Color(255, dist2(gen) , 0));
+                if (partType == 0) {
+                    particle.shape.setFillColor(sf::Color(255, dist2(gen) , 0));
+                } else if (partType == 1) {
+                    particle.shape.setFillColor(sf::Color(dist3(gen), 0 , 255));
+                }
 
                 int randomX = dist1(gen);
                 int randomY = dist1(gen);
@@ -52,10 +79,17 @@ int main() {
                     mousePos.y + static_cast<float>(randomY) - 10.f
                 });
 
-                particle.velocity = {
-                    static_cast<float>(dist1(gen)),
-                    static_cast<float>(dist1(gen))
-                };
+                if (partType == 0) {
+                    particle.velocity = {
+                        static_cast<float>(dist6(gen)),
+                        static_cast<float>(dist4(gen))
+                    };
+                } else if (partType == 1) {
+                    particle.velocity = {
+                        static_cast<float>(dist6(gen)),
+                        static_cast<float>(dist5(gen))
+                    };
+                }
 
                 particle.lt = 1.f;
                 particles.push_back(particle);
